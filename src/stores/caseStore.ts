@@ -45,7 +45,7 @@ export const useCaseStore = create<CaseState>()(
       fetchCases: () => {
         set({ loading: true });
         setTimeout(() => {
-          set({ cases: mockCases, loading: false });
+          set({ loading: false });
         }, 500);
       },
 

@@ -61,7 +61,7 @@ export const mockCases: Case[] = [
     foundedYear: 2016,
     closedYear: 2018,
     stage: 'C轮',
-    fundingAmount: 150000000,
+    fundingAmount: 15000,
     products: [
       {
         id: '1',
@@ -84,9 +84,9 @@ export const mockCases: Case[] = [
       { id: '2', name: '王强', role: 'CEO', avatar: '/avatars/wangqiang.jpg', change: '离开' }
     ],
     fundingRecords: [
-      { round: '天使轮', amount: 10000000, investors: '个人投资者', year: 2016 },
-      { round: 'A轮', amount: 100000000, investors: '红杉资本', year: 2017 },
-      { round: 'B轮', amount: 500000000, investors: '腾讯', year: 2017 }
+      { round: '天使轮', amount: 1000, investors: '个人投资者', year: 2016 },
+      { round: 'A轮', amount: 10000, investors: '红杉资本', year: 2017 },
+      { round: 'B轮', amount: 50000, investors: '腾讯', year: 2017 }
     ],
     failureReasons: [
       { category: '资金管理', description: '扩张速度过快，在多个城市同时投放车辆，资金消耗远超预期', severity: 5 },
@@ -118,7 +118,7 @@ export const mockCases: Case[] = [
     foundedYear: 2015,
     closedYear: 2017,
     stage: 'A轮',
-    fundingAmount: 20000000,
+    fundingAmount: 2000,
     products: [
       {
         id: '1',
@@ -139,8 +139,8 @@ export const mockCases: Case[] = [
       { id: '1', name: '王凯', role: '创始人', avatar: '/avatars/wangkai.jpg', change: '离开' }
     ],
     fundingRecords: [
-      { round: '种子轮', amount: 2000000, investors: '创新工场', year: 2015 },
-      { round: 'A轮', amount: 20000000, investors: '经纬中国', year: 2016 }
+      { round: '种子轮', amount: 200, investors: '创新工场', year: 2015 },
+      { round: 'A轮', amount: 2000, investors: '经纬中国', year: 2016 }
     ],
     failureReasons: [
       { category: '市场定位', description: '目标用户群体过于狭窄，难以形成规模效应', severity: 4 },
@@ -171,7 +171,7 @@ export const mockCases: Case[] = [
     foundedYear: 2018,
     closedYear: 2020,
     stage: 'B轮',
-    fundingAmount: 80000000,
+    fundingAmount: 8000,
     products: [
       {
         id: '1',
@@ -193,8 +193,8 @@ export const mockCases: Case[] = [
       { id: '2', name: '李娜', role: 'CTO', avatar: '/avatars/lina.jpg', change: '离开' }
     ],
     fundingRecords: [
-      { round: 'A轮', amount: 50000000, investors: 'IDG资本', year: 2018 },
-      { round: 'B轮', amount: 80000000, investors: 'GGV纪源资本', year: 2019 }
+      { round: 'A轮', amount: 5000, investors: 'IDG资本', year: 2018 },
+      { round: 'B轮', amount: 8000, investors: 'GGV纪源资本', year: 2019 }
     ],
     failureReasons: [
       { category: '商业模式', description: '变现能力不足，用户付费意愿低', severity: 5 },
@@ -225,7 +225,7 @@ export const mockCases: Case[] = [
     foundedYear: 2015,
     closedYear: 2019,
     stage: 'Pre-IPO',
-    fundingAmount: 350000000,
+    fundingAmount: 35000,
     products: [
       {
         id: '1',
@@ -246,8 +246,8 @@ export const mockCases: Case[] = [
       { id: '1', name: '杨骅', role: '创始人', avatar: '/avatars/yanghua.jpg', change: '被捕' }
     ],
     fundingRecords: [
-      { round: 'A轮', amount: 100000000, investors: '平安好医生', year: 2016 },
-      { round: 'B轮', amount: 250000000, investors: '腾讯投资', year: 2017 }
+      { round: 'A轮', amount: 10000, investors: '平安好医生', year: 2016 },
+      { round: 'B轮', amount: 25000, investors: '腾讯投资', year: 2017 }
     ],
     failureReasons: [
       { category: '商业模式', description: '采用多级分销模式，涉嫌传销', severity: 5 },
@@ -278,7 +278,7 @@ export const mockCases: Case[] = [
     foundedYear: 2014,
     closedYear: 2017,
     stage: 'A轮',
-    fundingAmount: 15000000,
+    fundingAmount: 1500,
     products: [
       {
         id: '1',
@@ -299,8 +299,8 @@ export const mockCases: Case[] = [
       { id: '1', name: '陈明', role: '创始人', avatar: '/avatars/chenming.jpg', change: '离开' }
     ],
     fundingRecords: [
-      { round: '种子轮', amount: 5000000, investors: '真格基金', year: 2015 },
-      { round: 'A轮', amount: 15000000, investors: '经纬中国', year: 2016 }
+      { round: '种子轮', amount: 500, investors: '真格基金', year: 2015 },
+      { round: 'A轮', amount: 1500, investors: '经纬中国', year: 2016 }
     ],
     failureReasons: [
       { category: '产品定位', description: '定位模糊，既想做大客户又想服务小客户', severity: 4 },
@@ -331,7 +331,7 @@ export const mockCases: Case[] = [
     foundedYear: 2016,
     closedYear: 2019,
     stage: 'B轮',
-    fundingAmount: 120000000,
+    fundingAmount: 12000,
     products: [
       {
         id: '1',
@@ -353,8 +353,8 @@ export const mockCases: Case[] = [
       { id: '2', name: '赵敏', role: 'COO', avatar: '/avatars/zhaomin.jpg', change: '离开' }
     ],
     fundingRecords: [
-      { round: 'A轮', amount: 50000000, investors: 'SIG海纳亚洲', year: 2017 },
-      { round: 'B轮', amount: 120000000, investors: 'GGV纪源资本', year: 2018 }
+      { round: 'A轮', amount: 5000, investors: 'SIG海纳亚洲', year: 2017 },
+      { round: 'B轮', amount: 12000, investors: 'GGV纪源资本', year: 2018 }
     ],
     failureReasons: [
       { category: '资金管理', description: '扩张速度远超营收增长，人员成本过高', severity: 5 },
@@ -385,7 +385,7 @@ export const mockCases: Case[] = [
     foundedYear: 2017,
     closedYear: 2019,
     stage: 'A轮',
-    fundingAmount: 30000000,
+    fundingAmount: 3000,
     products: [
       {
         id: '1',
@@ -406,7 +406,7 @@ export const mockCases: Case[] = [
       { id: '1', name: '周杰', role: '创始人', avatar: '/avatars/zhoujie.jpg', change: '离开' }
     ],
     fundingRecords: [
-      { round: 'A轮', amount: 30000000, investors: '险峰长青', year: 2017 }
+      { round: 'A轮', amount: 3000, investors: '险峰长青', year: 2017 }
     ],
     failureReasons: [
       { category: '政策风险', description: '内容监管不力，被迫下架整改', severity: 5 },
@@ -437,7 +437,7 @@ export const mockCases: Case[] = [
     foundedYear: 2013,
     closedYear: 2017,
     stage: 'B轮',
-    fundingAmount: 60000000,
+    fundingAmount: 6000,
     products: [
       {
         id: '1',
@@ -458,8 +458,8 @@ export const mockCases: Case[] = [
       { id: '1', name: '吴浩', role: '创始人', avatar: '/avatars/wuhao.jpg', change: '离开' }
     ],
     fundingRecords: [
-      { round: 'A轮', amount: 20000000, investors: '携程', year: 2014 },
-      { round: 'B轮', amount: 60000000, investors: '红杉资本', year: 2015 }
+      { round: 'A轮', amount: 2000, investors: '携程', year: 2014 },
+      { round: 'B轮', amount: 6000, investors: '红杉资本', year: 2015 }
     ],
     failureReasons: [
       { category: '市场竞争', description: '面对携程、美团等巨头竞争', severity: 5 },
@@ -490,7 +490,7 @@ export const mockCases: Case[] = [
     foundedYear: 2014,
     closedYear: 2020,
     stage: 'C轮',
-    fundingAmount: 200000000,
+    fundingAmount: 20000,
     products: [
       {
         id: '1',
@@ -512,9 +512,9 @@ export const mockCases: Case[] = [
       { id: '1', name: '韩迪', role: '创始人', avatar: '/avatars/handi.jpg', change: '离开' }
     ],
     fundingRecords: [
-      { round: 'A轮', amount: 100000000, investors: '经纬中国', year: 2015 },
-      { round: 'B轮', amount: 100000000, investors: '红杉资本', year: 2016 },
-      { round: 'C轮', amount: 200000000, investors: '华平投资', year: 2017 }
+      { round: 'A轮', amount: 10000, investors: '经纬中国', year: 2015 },
+      { round: 'B轮', amount: 10000, investors: '红杉资本', year: 2016 },
+      { round: 'C轮', amount: 20000, investors: '华平投资', year: 2017 }
     ],
     failureReasons: [
       { category: '商业模式', description: '重资产运营模式，成本过高', severity: 5 },
@@ -545,7 +545,7 @@ export const mockCases: Case[] = [
     foundedYear: 2015,
     closedYear: 2018,
     stage: 'A轮',
-    fundingAmount: 50000000,
+    fundingAmount: 5000,
     products: [
       {
         id: '1',
@@ -566,7 +566,7 @@ export const mockCases: Case[] = [
       { id: '1', name: '张晓', role: '创始人', avatar: '/avatars/zhangxiao.jpg', change: '离开' }
     ],
     fundingRecords: [
-      { round: 'A轮', amount: 50000000, investors: '合一资本', year: 2016 }
+      { round: 'A轮', amount: 5000, investors: '合一资本', year: 2016 }
     ],
     failureReasons: [
       { category: '政策风险', description: '监管政策收紧，部分业务受限', severity: 5 },
@@ -597,7 +597,7 @@ export const mockCases: Case[] = [
     foundedYear: 2016,
     closedYear: 2018,
     stage: 'B轮',
-    fundingAmount: 100000000,
+    fundingAmount: 10000,
     products: [
       {
         id: '1',
@@ -618,8 +618,8 @@ export const mockCases: Case[] = [
       { id: '1', name: '陈宇莹', role: 'CEO', avatar: '/avatars/chenyuying.jpg', change: '离开' }
     ],
     fundingRecords: [
-      { round: 'A轮', amount: 50000000, investors: '凯路仕', year: 2016 },
-      { round: 'B轮', amount: 100000000, investors: '联创永宣', year: 2017 }
+      { round: 'A轮', amount: 5000, investors: '凯路仕', year: 2016 },
+      { round: 'B轮', amount: 10000, investors: '联创永宣', year: 2017 }
     ],
     failureReasons: [
       { category: '资金管理', description: '押金管理不当，资金被挪用', severity: 5 },
@@ -650,7 +650,7 @@ export const mockCases: Case[] = [
     foundedYear: 2013,
     closedYear: 2019,
     stage: 'C轮',
-    fundingAmount: 300000000,
+    fundingAmount: 30000,
     products: [
       {
         id: '1',
@@ -671,9 +671,9 @@ export const mockCases: Case[] = [
       { id: '1', name: '郑德熙', role: '创始人', avatar: '/avatars/zhengdexi.jpg', change: '套现离场' }
     ],
     fundingRecords: [
-      { round: 'A轮', amount: 50000000, investors: '经纬中国', year: 2014 },
-      { round: 'B轮', amount: 150000000, investors: '天图资本', year: 2015 },
-      { round: 'C轮', amount: 300000000, investors: '阿里巴巴', year: 2017 }
+      { round: 'A轮', amount: 5000, investors: '经纬中国', year: 2014 },
+      { round: 'B轮', amount: 15000, investors: '天图资本', year: 2015 },
+      { round: 'C轮', amount: 30000, investors: '阿里巴巴', year: 2017 }
     ],
     failureReasons: [
       { category: '商业模式', description: '盈利模式不清晰，过度依赖融资', severity: 4 },
@@ -704,7 +704,7 @@ export const mockCases: Case[] = [
     foundedYear: 2012,
     closedYear: 2016,
     stage: 'B轮',
-    fundingAmount: 50000000,
+    fundingAmount: 5000,
     products: [
       {
         id: '1',
@@ -726,8 +726,8 @@ export const mockCases: Case[] = [
       { id: '2', name: '王志明', role: '联合创始人', avatar: '/avatars/wangzm.jpg', change: '离开' }
     ],
     fundingRecords: [
-      { round: 'A轮', amount: 20000000, investors: '君联资本', year: 2013 },
-      { round: 'B轮', amount: 50000000, investors: '启明创投', year: 2014 }
+      { round: 'A轮', amount: 2000, investors: '君联资本', year: 2013 },
+      { round: 'B轮', amount: 5000, investors: '启明创投', year: 2014 }
     ],
     failureReasons: [
       { category: '产品问题', description: '产品体验不佳，故障率高', severity: 4 },
@@ -758,7 +758,7 @@ export const mockCases: Case[] = [
     foundedYear: 2014,
     closedYear: 2017,
     stage: 'B轮',
-    fundingAmount: 80000000,
+    fundingAmount: 8000,
     products: [
       {
         id: '1',
@@ -779,8 +779,8 @@ export const mockCases: Case[] = [
       { id: '1', name: '唐万里', role: '创始人', avatar: '/avatars/tangwanli.jpg', change: '离开' }
     ],
     fundingRecords: [
-      { round: 'A轮', amount: 30000000, investors: '今日头条', year: 2015 },
-      { round: 'B轮', amount: 80000000, investors: '金沙江创投', year: 2016 }
+      { round: 'A轮', amount: 3000, investors: '今日头条', year: 2015 },
+      { round: 'B轮', amount: 8000, investors: '金沙江创投', year: 2016 }
     ],
     failureReasons: [
       { category: '政策风险', description: '家庭厨房监管政策趋严', severity: 5 },
@@ -811,7 +811,7 @@ export const mockCases: Case[] = [
     foundedYear: 2014,
     closedYear: 2016,
     stage: 'A轮',
-    fundingAmount: 40000000,
+    fundingAmount: 4000,
     products: [
       {
         id: '1',
@@ -831,7 +831,7 @@ export const mockCases: Case[] = [
       { id: '1', name: '王雪', role: '创始人', avatar: '/avatars/wangxue.jpg', change: '离开' }
     ],
     fundingRecords: [
-      { round: 'A轮', amount: 40000000, investors: '平安创投', year: 2015 }
+      { round: 'A轮', amount: 4000, investors: '平安创投', year: 2015 }
     ],
     failureReasons: [
       { category: '政策风险', description: '无法获得医药电商相关牌照', severity: 5 },
@@ -862,7 +862,7 @@ export const mockCases: Case[] = [
     foundedYear: 2015,
     closedYear: 2018,
     stage: 'A轮',
-    fundingAmount: 25000000,
+    fundingAmount: 2500,
     products: [
       {
         id: '1',
@@ -883,7 +883,7 @@ export const mockCases: Case[] = [
       { id: '1', name: '李明阳', role: '创始人', avatar: '/avatars/limingyang.jpg', change: '离开' }
     ],
     fundingRecords: [
-      { round: 'A轮', amount: 25000000, investors: '源码资本', year: 2016 }
+      { round: 'A轮', amount: 2500, investors: '源码资本', year: 2016 }
     ],
     failureReasons: [
       { category: '竞争压力', description: '美团、饿了么等巨头进入市场', severity: 5 },
@@ -914,7 +914,7 @@ export const mockCases: Case[] = [
     foundedYear: 2013,
     closedYear: 2017,
     stage: 'B轮',
-    fundingAmount: 60000000,
+    fundingAmount: 6000,
     products: [
       {
         id: '1',
@@ -936,8 +936,8 @@ export const mockCases: Case[] = [
       { id: '2', name: '李强', role: '联合创始人', avatar: '/avatars/liqiang.jpg', change: '离开' }
     ],
     fundingRecords: [
-      { round: 'A轮', amount: 20000000, investors: '清流资本', year: 2014 },
-      { round: 'B轮', amount: 60000000, investors: '蓝驰创投', year: 2015 }
+      { round: 'A轮', amount: 2000, investors: '清流资本', year: 2014 },
+      { round: 'B轮', amount: 6000, investors: '蓝驰创投', year: 2015 }
     ],
     failureReasons: [
       { category: '团队问题', description: '创始团队内斗，核心人员流失', severity: 5 },
@@ -968,7 +968,7 @@ export const mockCases: Case[] = [
     foundedYear: 2012,
     closedYear: 2016,
     stage: 'B轮',
-    fundingAmount: 80000000,
+    fundingAmount: 8000,
     products: [
       {
         id: '1',
@@ -989,8 +989,8 @@ export const mockCases: Case[] = [
       { id: '1', name: '张洋', role: '创始人', avatar: '/avatars/zhangyang.jpg', change: '离开' }
     ],
     fundingRecords: [
-      { round: 'A轮', amount: 30000000, investors: '鼎晖创投', year: 2013 },
-      { round: 'B轮', amount: 80000000, investors: '清科创投', year: 2014 }
+      { round: 'A轮', amount: 3000, investors: '鼎晖创投', year: 2013 },
+      { round: 'B轮', amount: 8000, investors: '清科创投', year: 2014 }
     ],
     failureReasons: [
       { category: '转型问题', description: 'C端转B端战略失误', severity: 4 },
@@ -1021,7 +1021,7 @@ export const mockCases: Case[] = [
     foundedYear: 2012,
     closedYear: 2018,
     stage: 'C轮',
-    fundingAmount: 150000000,
+    fundingAmount: 15000,
     products: [
       {
         id: '1',
@@ -1043,9 +1043,9 @@ export const mockCases: Case[] = [
       { id: '1', name: '柴可', role: '创始人', avatar: '/avatars/chaike.jpg', change: '离开' }
     ],
     fundingRecords: [
-      { round: 'A轮', amount: 50000000, investors: '真格基金', year: 2013 },
-      { round: 'B轮', amount: 100000000, investors: '红杉资本', year: 2014 },
-      { round: 'C轮', amount: 150000000, investors: 'BAI贝塔斯曼', year: 2015 }
+      { round: 'A轮', amount: 5000, investors: '真格基金', year: 2013 },
+      { round: 'B轮', amount: 10000, investors: '红杉资本', year: 2014 },
+      { round: 'C轮', amount: 15000, investors: 'BAI贝塔斯曼', year: 2015 }
     ],
     failureReasons: [
       { category: '商业模式', description: '女性健康领域变现困难', severity: 5 },
@@ -1076,7 +1076,7 @@ export const mockCases: Case[] = [
     foundedYear: 2017,
     closedYear: 2019,
     stage: 'A轮',
-    fundingAmount: 18000000,
+    fundingAmount: 1800,
     products: [
       {
         id: '1',
@@ -1096,7 +1096,7 @@ export const mockCases: Case[] = [
       { id: '1', name: '王凯', role: '创始人', avatar: '/avatars/wangkai.jpg', change: '再次离开' }
     ],
     fundingRecords: [
-      { round: 'A轮', amount: 18000000, investors: '创新工场', year: 2018 }
+      { round: 'A轮', amount: 1800, investors: '创新工场', year: 2018 }
     ],
     failureReasons: [
       { category: '竞争压力', description: '面对毒、nice等强劲对手', severity: 5 },

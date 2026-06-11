@@ -253,7 +253,7 @@ export default function CaseDetailPage() {
                     {currentCase.fundingRecords.map((record, index) => (
                       <tr key={index} className="border-b border-[#16213e]/50 hover:bg-[#16213e]/30">
                         <td className="py-3 px-4 text-white">{record.round}</td>
-                        <td className="py-3 px-4 text-[#4ecca3] font-semibold">{formatCurrency(record.amount)}万</td>
+                        <td className="py-3 px-4 text-[#4ecca3] font-semibold">{formatCurrency(record.amount)}</td>
                         <td className="py-3 px-4 text-gray-300">{record.investors}</td>
                         <td className="py-3 px-4 text-gray-400">{record.year}年</td>
                       </tr>
