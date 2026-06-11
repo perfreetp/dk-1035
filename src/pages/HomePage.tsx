@@ -7,7 +7,7 @@ import CaseCard from '../components/CaseCard';
 import { formatNumber, formatCurrency } from '../utils/formatters';
 
 export default function HomePage() {
-  const { cases, fetchCases, getFilteredCases } = useCaseStore();
+  const { cases, fetchCases, getFilteredCases, getApprovedCases } = useCaseStore();
   const [stats, setStats] = useState({ total: 0, funding: 0, industries: 0 });
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export default function HomePage() {
   }, [fetchCases]);
 
   useEffect(() => {
-    const approvedCases = getFilteredCases();
+    const approvedCases = getApprovedCases();
     if (approvedCases.length > 0) {
       const totalFunding = approvedCases.reduce((sum, c) => sum + c.fundingAmount, 0);
       const uniqueIndustries = new Set(approvedCases.map(c => c.industry)).size;
@@ -25,7 +25,7 @@ export default function HomePage() {
         industries: uniqueIndustries
       });
     }
-  }, [cases, getFilteredCases]);
+  }, [cases, getApprovedCases]);
 
   const featuredCases = getFilteredCases().slice(0, 6);
   const recentCases = [...getFilteredCases()].sort((a, b) => b.closedYear - a.closedYear).slice(0, 5);

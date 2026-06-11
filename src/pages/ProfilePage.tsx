@@ -9,6 +9,7 @@ import { useCorrectionStore } from '../stores/correctionStore';
 import CaseCard from '../components/CaseCard';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
+import { formatCurrency } from '../utils/formatters';
 
 type TabType = 'favorites' | 'notes' | 'submissions' | 'admin';
 
@@ -333,7 +334,7 @@ export default function ProfilePage() {
                                 <Badge variant="default">{pendingCase.industry}</Badge>
                                 <Badge variant="default">{pendingCase.region}</Badge>
                                 <Badge variant="default">{pendingCase.stage}</Badge>
-                                <Badge variant="default">{pendingCase.fundingAmount}万元</Badge>
+                                <Badge variant="success">{formatCurrency(pendingCase.fundingAmount)}</Badge>
                               </div>
                             </div>
                             <div className="flex space-x-2">

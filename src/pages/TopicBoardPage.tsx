@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Flame, RefreshCw, UserX, Swords, Scale, UsersRound, ArrowLeft, TrendingUp } from 'lucide-react';
+import { Flame, RefreshCw, UserX, Swords, Scale, UsersRound, ArrowLeft, TrendingUp, PieChart, BarChart3, TrendingDown } from 'lucide-react';
 import { useCaseStore } from '../stores/caseStore';
 import { mockTopics } from '../data/mockData';
 import CaseCard from '../components/CaseCard';
 import { formatNumber, formatCurrency } from '../utils/formatters';
+import { Case } from '../types';
 
 export default function TopicBoardPage() {
   const { topicId } = useParams<{ topicId?: string }>();
-  const { cases, fetchCases, getFilteredCases } = useCaseStore();
+  const { cases, fetchCases, getFilteredCases, getApprovedCases } = useCaseStore();
   const [selectedTopic, setSelectedTopic] = useState(topicId || '');
   const [topicCases, setTopicCases] = useState<typeof cases>([]);
 
@@ -24,12 +25,12 @@ export default function TopicBoardPage() {
 
   useEffect(() => {
     if (selectedTopic) {
-      const filtered = getFilteredCases().filter(c => c.topics.includes(selectedTopic));
+      const filtered = getApprovedCases().filter(c => c.topics.includes(selectedTopic));
       setTopicCases(filtered);
     } else {
       setTopicCases([]);
     }
-  }, [selectedTopic, cases, getFilteredCases]);
+  }, [selectedTopic, cases, getApprovedCases]);
 
   const topicIcons: Record<string, any> = {
     'flame': Flame,
@@ -43,13 +44,57 @@ export default function TopicBoardPage() {
   const currentTopic = mockTopics.find(t => t.id === selectedTopic);
 
   const getTopicStats = (topicId: string) => {
-    const topicCasesData = getFilteredCases().filter(c => c.topics.includes(topicId));
+    const topicCasesData = getApprovedCases().filter(c => c.topics.includes(topicId));
     const totalFunding = topicCasesData.reduce((sum, c) => sum + c.fundingAmount, 0);
     const avgFunding = topicCasesData.length > 0 ? totalFunding / topicCasesData.length : 0;
     return {
       count: topicCasesData.length,
       avgFunding
     };
+  };
+
+  const getFailureReasonDistribution = (casesData: Case[]) => {
+    const distribution: Record<string, number> = {};
+    casesData.forEach(c => {
+      c.failureReasons.forEach(reason => {
+        distribution[reason.category] = (distribution[reason.category] || 0) + 1;
+      });
+    });
+    return Object.entries(distribution)
+      .map(([reason, count]) => ({ reason, count }))
+      .sort((a, b) => b.count - a.count);
+  };
+
+  const getFundingRangeDistribution = (casesData: Case[]) => {
+    const ranges = [
+      { label: '<1000万', min: 0, max: 1000, count: 0 },
+      { label: '1000-5000万', min: 1000, max: 5000, count: 0 },
+      { label: '5000万-1亿', min: 5000, max: 10000, count: 0 },
+      { label: '1-5亿', min: 10000, max: 50000, count: 0 },
+      { label: '>5亿', min: 50000, max: Infinity, count: 0 }
+    ];
+
+    casesData.forEach(c => {
+      const range = ranges.find(r => c.fundingAmount >= r.min && c.fundingAmount < r.max);
+      if (range) range.count++;
+    });
+
+    return ranges;
+  };
+
+  const getClosingYearTrend = (casesData: Case[]) => {
+    const yearCounts: Record<number, number> = {};
+    casesData.forEach(c => {
+      yearCounts[c.closedYear] = (yearCounts[c.closedYear] || 0) + 1;
+    });
+
+    return Object.entries(yearCounts)
+      .map(([year, count]) => ({ year: parseInt(year), count }))
+      .sort((a, b) => a.year - b.year);
+  };
+
+  const getMaxCount = (data: Array<{ reason?: string; count: number }>) => {
+    return Math.max(...data.map(d => d.count));
   };
 
   return (
@@ -150,6 +195,98 @@ export default function TopicBoardPage() {
                 </div>
               </div>
             </div>
+
+            {topicCases.length > 0 && (
+              <div className="mb-8">
+                <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
+                  <BarChart3 className="w-6 h-6 mr-2 text-[#4ecca3]" />
+                  专题统计分析
+                </h2>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <div className="bg-[#1a1a2e] rounded-xl border border-[#16213e] p-6">
+                    <div className="flex items-center mb-4">
+                      <PieChart className="w-5 h-5 text-[#e94560] mr-2" />
+                      <h3 className="text-lg font-semibold text-white">失败原因占比</h3>
+                    </div>
+                    <div className="space-y-3">
+                      {(() => {
+                        const reasonDist = getFailureReasonDistribution(topicCases);
+                        const maxCount = getMaxCount(reasonDist);
+                        return reasonDist.slice(0, 5).map((item, idx) => (
+                          <div key={idx} className="space-y-1">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-gray-300">{item.reason}</span>
+                              <span className="text-[#e94560] font-semibold">{item.count}例</span>
+                            </div>
+                            <div className="w-full bg-[#16213e] rounded-full h-2">
+                              <div
+                                className="bg-gradient-to-r from-[#e94560] to-[#ff6b8a] h-2 rounded-full transition-all"
+                                style={{ width: `${(item.count / maxCount) * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                        ));
+                      })()}
+                    </div>
+                  </div>
+
+                  <div className="bg-[#1a1a2e] rounded-xl border border-[#16213e] p-6">
+                    <div className="flex items-center mb-4">
+                      <TrendingUp className="w-5 h-5 text-[#4ecca3] mr-2" />
+                      <h3 className="text-lg font-semibold text-white">融资区间分布</h3>
+                    </div>
+                    <div className="space-y-3">
+                      {(() => {
+                        const fundingDist = getFundingRangeDistribution(topicCases);
+                        const maxCount = getMaxCount(fundingDist);
+                        return fundingDist.filter(r => r.count > 0).map((range, idx) => (
+                          <div key={idx} className="space-y-1">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-gray-300">{range.label}</span>
+                              <span className="text-[#4ecca3] font-semibold">{range.count}例</span>
+                            </div>
+                            <div className="w-full bg-[#16213e] rounded-full h-2">
+                              <div
+                                className="bg-gradient-to-r from-[#4ecca3] to-[#7ee8c7] h-2 rounded-full transition-all"
+                                style={{ width: `${(range.count / maxCount) * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                        ));
+                      })()}
+                    </div>
+                  </div>
+
+                  <div className="bg-[#1a1a2e] rounded-xl border border-[#16213e] p-6">
+                    <div className="flex items-center mb-4">
+                      <TrendingDown className="w-5 h-5 text-[#45b7d1] mr-2" />
+                      <h3 className="text-lg font-semibold text-white">关闭年份趋势</h3>
+                    </div>
+                    <div className="space-y-3">
+                      {(() => {
+                        const yearTrend = getClosingYearTrend(topicCases);
+                        const maxCount = getMaxCount(yearTrend);
+                        return yearTrend.map((item, idx) => (
+                          <div key={idx} className="space-y-1">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-gray-300">{item.year}年</span>
+                              <span className="text-[#45b7d1] font-semibold">{item.count}例</span>
+                            </div>
+                            <div className="w-full bg-[#16213e] rounded-full h-2">
+                              <div
+                                className="bg-gradient-to-r from-[#45b7d1] to-[#7dd3e8] h-2 rounded-full transition-all"
+                                style={{ width: `${(item.count / maxCount) * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                        ));
+                      })()}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-white">相关案例</h2>

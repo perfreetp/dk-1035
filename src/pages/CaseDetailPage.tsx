@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, Calendar, MapPin, TrendingUp, DollarSign, ExternalLink, Eye, AlertTriangle, Lightbulb, Users, Package, Send, X } from 'lucide-react';
+import { ArrowLeft, Heart, Calendar, MapPin, TrendingUp, DollarSign, ExternalLink, Eye, AlertTriangle, Lightbulb, Users, Package, Send, X, GitCompare } from 'lucide-react';
 import { useCaseStore } from '../stores/caseStore';
 import { useFavoriteStore } from '../stores/favoriteStore';
 import { useUserStore } from '../stores/userStore';
@@ -9,14 +9,16 @@ import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
 import Modal from '../components/common/Modal';
 import { formatCurrency, calculateLifespan, formatYearMonth } from '../utils/formatters';
+import { Case } from '../types';
 
 export default function CaseDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { fetchCaseById, currentCase } = useCaseStore();
+  const { fetchCaseById, currentCase, getFilteredCases } = useCaseStore();
   const { isFavorite, toggleFavorite } = useFavoriteStore();
   const { isAuthenticated } = useUserStore();
   const { addCorrection } = useCorrectionStore();
+  const [compareCases, setCompareCases] = useState<Case[]>([]);
   
   const [showCorrectionModal, setShowCorrectionModal] = useState(false);
   const [correctionType, setCorrectionType] = useState<string>('basic');
@@ -28,6 +30,17 @@ export default function CaseDetailPage() {
       fetchCaseById(id);
     }
   }, [id, fetchCaseById]);
+
+  useEffect(() => {
+    if (currentCase) {
+      const allCases = getFilteredCases();
+      const similarCases = allCases.filter(c => 
+        c.id !== currentCase.id &&
+        (c.industry === currentCase.industry || c.stage === currentCase.stage)
+      ).slice(0, 4);
+      setCompareCases(similarCases);
+    }
+  }, [currentCase, getFilteredCases]);
 
   if (!currentCase) {
     return (
@@ -334,6 +347,87 @@ export default function CaseDetailPage() {
                 ))}
               </div>
             </div>
+
+            {compareCases.length > 0 && (
+              <div className="bg-[#1a1a2e] rounded-xl border border-[#16213e] p-6">
+                <h2 className="text-xl font-bold text-white mb-6 flex items-center">
+                  <GitCompare className="w-5 h-5 mr-2 text-[#e94560]" />
+                  对比分析
+                </h2>
+                <p className="text-gray-400 mb-6">与同行业、同阶段失败案例的横向对比</p>
+                
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-[#16213e]">
+                        <th className="text-left py-3 px-4 text-sm font-semibold text-gray-400">项目名称</th>
+                        <th className="text-left py-3 px-4 text-sm font-semibold text-gray-400">融资规模</th>
+                        <th className="text-left py-3 px-4 text-sm font-semibold text-gray-400">存活年限</th>
+                        <th className="text-left py-3 px-4 text-sm font-semibold text-gray-400">主要失败原因</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b border-[#16213e] bg-[#e94560]/10">
+                        <td className="py-3 px-4 text-white font-semibold">{currentCase.name}</td>
+                        <td className="py-3 px-4 text-[#4ecca3] font-semibold">{formatCurrency(currentCase.fundingAmount)}</td>
+                        <td className="py-3 px-4 text-white">{calculateLifespan(currentCase.foundedYear, currentCase.closedYear)}</td>
+                        <td className="py-3 px-4 text-gray-300">{currentCase.failureReasons[0]?.category || '-'}</td>
+                      </tr>
+                      {compareCases.map((caseItem, index) => (
+                        <tr key={index} className="border-b border-[#16213e]/50 hover:bg-[#16213e]/30">
+                          <td className="py-3 px-4">
+                            <Link to={`/cases/${caseItem.id}`} className="text-[#e94560] hover:underline">
+                              {caseItem.name}
+                            </Link>
+                          </td>
+                          <td className="py-3 px-4 text-[#4ecca3]">{formatCurrency(caseItem.fundingAmount)}</td>
+                          <td className="py-3 px-4 text-gray-300">{calculateLifespan(caseItem.foundedYear, caseItem.closedYear)}</td>
+                          <td className="py-3 px-4 text-gray-300">{caseItem.failureReasons[0]?.category || '-'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-[#0f0f23] rounded-lg p-4">
+                    <div className="text-sm text-gray-400 mb-2">融资规模对比</div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-white">{formatCurrency(currentCase.fundingAmount)}</span>
+                      <Badge variant={currentCase.fundingAmount >= compareCases.reduce((sum, c) => sum + c.fundingAmount, 0) / compareCases.length ? 'danger' : 'success'} size="sm">
+                        {currentCase.fundingAmount >= compareCases.reduce((sum, c) => sum + c.fundingAmount, 0) / compareCases.length ? '偏高' : '偏低'}
+                      </Badge>
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      同类均值: {formatCurrency(compareCases.reduce((sum, c) => sum + c.fundingAmount, 0) / compareCases.length)}
+                    </div>
+                  </div>
+                  <div className="bg-[#0f0f23] rounded-lg p-4">
+                    <div className="text-sm text-gray-400 mb-2">存活年限对比</div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-white">{calculateLifespan(currentCase.foundedYear, currentCase.closedYear)}</span>
+                      <Badge variant="default" size="sm">
+                        {currentCase.closedYear - currentCase.foundedYear >= compareCases.reduce((sum, c) => sum + (c.closedYear - c.foundedYear), 0) / compareCases.length ? '较长' : '较短'}
+                      </Badge>
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      同类均值: {Math.round(compareCases.reduce((sum, c) => sum + (c.closedYear - c.foundedYear), 0) / compareCases.length)}年
+                    </div>
+                  </div>
+                  <div className="bg-[#0f0f23] rounded-lg p-4">
+                    <div className="text-sm text-gray-400 mb-2">失败原因分布</div>
+                    <div className="space-y-1">
+                      {currentCase.failureReasons.slice(0, 2).map((reason, idx) => (
+                        <div key={idx} className="flex items-center justify-between text-sm">
+                          <span className="text-gray-300">{reason.category}</span>
+                          <Badge variant="danger" size="sm">{reason.severity}/5</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="space-y-6">

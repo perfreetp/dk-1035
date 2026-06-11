@@ -5,6 +5,7 @@ import { useCaseStore } from '../stores/caseStore';
 import { useUserStore } from '../stores/userStore';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
+import { formatCurrency } from '../utils/formatters';
 
 const industries = ['出行交通', '电子商务', '社交网络', '医疗健康', '企业服务', '教育培训', '旅游出行', '物流运输', '文化娱乐', '本地生活'];
 const regions = ['华北', '华东', '华南', '华中和西南', '海外'];
@@ -413,7 +414,7 @@ export default function CaseSubmitPage() {
                       </div>
                       <div>
                         <div className="text-sm text-gray-400 mb-1">融资总额</div>
-                        <div className="text-white">{formData.fundingAmount}万元</div>
+                        <div className="text-[#4ecca3]">{formatCurrency(formData.fundingAmount || 0)}</div>
                       </div>
                     </div>
 

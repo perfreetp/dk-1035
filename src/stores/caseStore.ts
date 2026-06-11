@@ -17,6 +17,7 @@ interface CaseState {
   setViewMode: (mode: 'grid' | 'list') => void;
   setSortBy: (sort: 'time' | 'funding' | 'hot') => void;
   getFilteredCases: () => Case[];
+  getApprovedCases: () => Case[];
   getPendingCases: () => Case[];
   submitCase: (caseData: Partial<Case>, userId: string) => void;
   approveCase: (caseId: string) => void;
@@ -138,6 +139,11 @@ export const useCaseStore = create<CaseState>()(
         }
 
         return filtered;
+      },
+
+      getApprovedCases: () => {
+        const { cases } = get();
+        return [...mockCases, ...cases].filter(c => c.status === 'approved');
       },
 
       getPendingCases: () => {
