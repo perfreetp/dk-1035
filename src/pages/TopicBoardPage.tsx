@@ -4,7 +4,7 @@ import { Flame, RefreshCw, UserX, Swords, Scale, UsersRound, ArrowLeft, Trending
 import { useCaseStore } from '../stores/caseStore';
 import { mockTopics } from '../data/mockData';
 import CaseCard from '../components/CaseCard';
-import { formatNumber } from '../utils/formatters';
+import { formatNumber, formatCurrency } from '../utils/formatters';
 
 export default function TopicBoardPage() {
   const { topicId } = useParams<{ topicId?: string }>();
@@ -24,12 +24,12 @@ export default function TopicBoardPage() {
 
   useEffect(() => {
     if (selectedTopic) {
-      const filtered = cases.filter(c => c.topics.includes(selectedTopic));
+      const filtered = getFilteredCases().filter(c => c.topics.includes(selectedTopic));
       setTopicCases(filtered);
     } else {
       setTopicCases([]);
     }
-  }, [selectedTopic, cases]);
+  }, [selectedTopic, cases, getFilteredCases]);
 
   const topicIcons: Record<string, any> = {
     'flame': Flame,
@@ -43,7 +43,7 @@ export default function TopicBoardPage() {
   const currentTopic = mockTopics.find(t => t.id === selectedTopic);
 
   const getTopicStats = (topicId: string) => {
-    const topicCasesData = cases.filter(c => c.topics.includes(topicId));
+    const topicCasesData = getFilteredCases().filter(c => c.topics.includes(topicId));
     const totalFunding = topicCasesData.reduce((sum, c) => sum + c.fundingAmount, 0);
     const avgFunding = topicCasesData.length > 0 ? totalFunding / topicCasesData.length : 0;
     return {
@@ -137,18 +137,14 @@ export default function TopicBoardPage() {
                 <div className="bg-[#0f0f23] rounded-lg p-4">
                   <div className="text-sm text-gray-400 mb-1">累计融资</div>
                   <div className="text-2xl font-bold text-[#4ecca3]">
-                    {topicCases.reduce((sum, c) => sum + c.fundingAmount, 0) >= 100000000
-                      ? `${(topicCases.reduce((sum, c) => sum + c.fundingAmount, 0) / 100000000).toFixed(1)}亿`
-                      : `${(topicCases.reduce((sum, c) => sum + c.fundingAmount, 0) / 10000).toFixed(0)}万`}
+                    {formatCurrency(topicCases.reduce((sum, c) => sum + c.fundingAmount, 0))}
                   </div>
                 </div>
                 <div className="bg-[#0f0f23] rounded-lg p-4">
                   <div className="text-sm text-gray-400 mb-1">平均融资</div>
                   <div className="text-2xl font-bold text-[#45b7d1]">
                     {topicCases.length > 0
-                      ? topicCases.reduce((sum, c) => sum + c.fundingAmount, 0) / topicCases.length >= 100000000
-                        ? `${(topicCases.reduce((sum, c) => sum + c.fundingAmount, 0) / topicCases.length / 100000000).toFixed(1)}亿`
-                        : `${(topicCases.reduce((sum, c) => sum + c.fundingAmount, 0) / topicCases.length / 10000).toFixed(0)}万`
+                      ? formatCurrency(topicCases.reduce((sum, c) => sum + c.fundingAmount, 0) / topicCases.length)
                       : '0'}
                   </div>
                 </div>
@@ -183,7 +179,7 @@ export default function TopicBoardPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...cases].sort((a, b) => b.stats.views - a.stats.views).slice(0, 6).map(caseItem => (
+              {[...getFilteredCases()].sort((a, b) => b.stats.views - a.stats.views).slice(0, 6).map(caseItem => (
                 <CaseCard key={caseItem.id} caseData={caseItem} />
               ))}
             </div>

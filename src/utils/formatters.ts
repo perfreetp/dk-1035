@@ -1,10 +1,8 @@
 export const formatCurrency = (amount: number): string => {
-  if (amount >= 100000000) {
-    return `${(amount / 100000000).toFixed(1)}亿`;
-  } else if (amount >= 10000) {
-    return `${(amount / 10000).toFixed(0)}万`;
+  if (amount >= 10000) {
+    return `${(amount / 10000).toFixed(1)}亿`;
   }
-  return `${amount}`;
+  return `${amount}万`;
 };
 
 export const formatNumber = (num: number): string => {

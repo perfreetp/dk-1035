@@ -4,7 +4,7 @@ import { BookOpen, TrendingUp, DollarSign, Users, Flame, RefreshCw, UserX, Sword
 import { useCaseStore } from '../stores/caseStore';
 import { mockTopics } from '../data/mockData';
 import CaseCard from '../components/CaseCard';
-import { formatNumber } from '../utils/formatters';
+import { formatNumber, formatCurrency } from '../utils/formatters';
 
 export default function HomePage() {
   const { cases, fetchCases, getFilteredCases } = useCaseStore();
@@ -15,16 +15,17 @@ export default function HomePage() {
   }, [fetchCases]);
 
   useEffect(() => {
-    if (cases.length > 0) {
-      const totalFunding = cases.reduce((sum, c) => sum + c.fundingAmount, 0);
-      const uniqueIndustries = new Set(cases.map(c => c.industry)).size;
+    const approvedCases = getFilteredCases();
+    if (approvedCases.length > 0) {
+      const totalFunding = approvedCases.reduce((sum, c) => sum + c.fundingAmount, 0);
+      const uniqueIndustries = new Set(approvedCases.map(c => c.industry)).size;
       setStats({
-        total: cases.length,
+        total: approvedCases.length,
         funding: totalFunding,
         industries: uniqueIndustries
       });
     }
-  }, [cases]);
+  }, [cases, getFilteredCases]);
 
   const featuredCases = getFilteredCases().slice(0, 6);
   const recentCases = [...getFilteredCases()].sort((a, b) => b.closedYear - a.closedYear).slice(0, 5);
@@ -99,7 +100,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <div className="text-3xl font-bold text-white">
-                    {stats.funding >= 1000000000 ? `${(stats.funding / 1000000000).toFixed(1)}亿` : `${(stats.funding / 100000000).toFixed(0)}亿`}
+                    {formatCurrency(stats.funding)}
                   </div>
                   <div className="text-sm text-gray-400">累计融资</div>
                 </div>
