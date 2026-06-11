@@ -1,0 +1,268 @@
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Heart, FileText, Send, AlertCircle, User, Edit2, Trash2, Save } from 'lucide-react';
+import { useUserStore } from '../stores/userStore';
+import { useFavoriteStore } from '../stores/favoriteStore';
+import { useNoteStore } from '../stores/noteStore';
+import { useCaseStore } from '../stores/caseStore';
+import CaseCard from '../components/CaseCard';
+import Button from '../components/common/Button';
+import Badge from '../components/common/Badge';
+import Modal from '../components/common/Modal';
+
+type TabType = 'favorites' | 'notes' | 'submissions';
+
+export default function ProfilePage() {
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useUserStore();
+  const { favorites, removeFavorite } = useFavoriteStore();
+  const { notes, addNote, updateNote, deleteNote } = useNoteStore();
+  const { cases, fetchCases } = useCaseStore();
+  
+  const [activeTab, setActiveTab] = useState<TabType>('favorites');
+  const [editingNote, setEditingNote] = useState<string | null>(null);
+  const [noteContent, setNoteContent] = useState('');
+  const [showNoteModal, setShowNoteModal] = useState(false);
+  const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+    fetchCases();
+  }, [isAuthenticated, navigate, fetchCases]);
+
+  if (!isAuthenticated || !user) {
+    return null;
+  }
+
+  const favoriteCases = cases.filter(c => favorites.includes(c.id));
+  const userNotes = notes.filter(n => n.userId === user.id);
+  const pendingSubmissions = cases.filter(c => c.status === 'pending');
+
+  const handleSaveNote = (caseId: string) => {
+    if (editingNote) {
+      updateNote(editingNote, noteContent);
+      setEditingNote(null);
+    } else {
+      addNote(caseId, user.id, noteContent);
+      setSelectedCaseId(null);
+    }
+    setNoteContent('');
+    setShowNoteModal(false);
+  };
+
+  const handleDeleteNote = (noteId: string) => {
+    if (confirm('确定要删除这条笔记吗？')) {
+      deleteNote(noteId);
+    }
+  };
+
+  const startEditNote = (noteId: string, content: string) => {
+    setEditingNote(noteId);
+    setNoteContent(content);
+    setShowNoteModal(true);
+  };
+
+  const tabs = [
+    { id: 'favorites', label: '我的收藏', icon: Heart, count: favoriteCases.length },
+    { id: 'notes', label: '我的笔记', icon: FileText, count: userNotes.length },
+    { id: 'submissions', label: '提交记录', icon: Send, count: pendingSubmissions.length }
+  ];
+
+  return (
+    <div className="min-h-screen bg-[#0f0f23]">
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-[#1a1a2e] rounded-xl border border-[#16213e] mb-6">
+          <div className="p-6 border-b border-[#16213e]">
+            <div className="flex items-center space-x-4">
+              <div className="w-20 h-20 bg-gradient-to-br from-[#e94560] to-[#4ecca3] rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                {user.name.charAt(0)}
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white">{user.name}</h1>
+                <p className="text-gray-400">{user.email}</p>
+                <Badge variant={user.role === 'admin' ? 'danger' : 'success'} size="sm" className="mt-2">
+                  {user.role === 'admin' ? '管理员' : '普通用户'}
+                </Badge>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex border-b border-[#16213e]">
+            {tabs.map(tab => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as TabType)}
+                  className={`flex-1 flex items-center justify-center space-x-2 px-6 py-4 transition-colors ${
+                    activeTab === tab.id
+                      ? 'bg-[#e94560]/10 text-[#e94560] border-b-2 border-[#e94560]'
+                      : 'text-gray-400 hover:text-white hover:bg-[#16213e]/50'
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  <span>{tab.label}</span>
+                  <Badge variant="default" size="sm">{tab.count}</Badge>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="p-6">
+            {activeTab === 'favorites' && (
+              <div>
+                {favoriteCases.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Heart className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                    <p className="text-gray-400 mb-4">还没有收藏任何案例</p>
+                    <Link to="/cases">
+                      <Button>浏览案例库</Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {favoriteCases.map(caseItem => (
+                      <div key={caseItem.id} className="relative">
+                        <CaseCard caseData={caseItem} />
+                        <button
+                          onClick={() => removeFavorite(caseItem.id)}
+                          className="absolute top-2 right-2 p-2 bg-[#0f0f23]/80 rounded-full text-gray-400 hover:text-[#e94560] hover:bg-[#0f0f23] transition-colors"
+                        >
+                          <Heart className="w-5 h-5 fill-current" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'notes' && (
+              <div>
+                {userNotes.length === 0 ? (
+                  <div className="text-center py-12">
+                    <FileText className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                    <p className="text-gray-400 mb-4">还没有撰写任何笔记</p>
+                    <Link to="/cases">
+                      <Button>去案例库写笔记</Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {userNotes.map(note => {
+                      const relatedCase = cases.find(c => c.id === note.caseId);
+                      return (
+                        <div key={note.id} className="bg-[#0f0f23] rounded-lg p-4 border border-[#16213e]">
+                          <div className="flex items-center justify-between mb-3">
+                            <div>
+                              {relatedCase ? (
+                                <Link to={`/cases/${note.caseId}`} className="text-[#e94560] hover:underline font-semibold">
+                                  {relatedCase.name}
+                                </Link>
+                              ) : (
+                                <span className="text-gray-400">案例已删除</span>
+                              )}
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() => startEditNote(note.id, note.content)}
+                                className="p-2 text-gray-400 hover:text-white hover:bg-[#16213e] rounded-lg transition-colors"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteNote(note.id)}
+                                className="p-2 text-gray-400 hover:text-[#e94560] hover:bg-[#16213e] rounded-lg transition-colors"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                          <p className="text-gray-300 whitespace-pre-wrap">{note.content}</p>
+                          <div className="text-sm text-gray-500 mt-3">
+                            创建于 {new Date(note.createdAt).toLocaleDateString('zh-CN')}
+                            {note.updatedAt !== note.createdAt && (
+                              <span> · 更新于 {new Date(note.updatedAt).toLocaleDateString('zh-CN')}</span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold text-white mb-4">为案例写笔记</h3>
+                  <select
+                    value={selectedCaseId || ''}
+                    onChange={(e) => setSelectedCaseId(e.target.value || null)}
+                    className="w-full px-4 py-3 bg-[#0f0f23] border border-[#16213e] rounded-lg text-white mb-4"
+                  >
+                    <option value="">选择案例</option>
+                    {favoriteCases.map(caseItem => (
+                      <option key={caseItem.id} value={caseItem.id}>{caseItem.name}</option>
+                    ))}
+                  </select>
+                  {selectedCaseId && (
+                    <>
+                      <textarea
+                        value={noteContent}
+                        onChange={(e) => setNoteContent(e.target.value)}
+                        placeholder="在这里写下你的笔记..."
+                        className="w-full px-4 py-3 bg-[#0f0f23] border border-[#16213e] rounded-lg text-white h-40 mb-4"
+                      />
+                      <Button onClick={() => {
+                        if (noteContent.trim()) {
+                          handleSaveNote(selectedCaseId);
+                        }
+                      }}>
+                        <Save className="w-4 h-4 mr-2" />
+                        保存笔记
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'submissions' && (
+              <div>
+                {pendingSubmissions.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Send className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                    <p className="text-gray-400 mb-4">还没有提交过案例</p>
+                    <Link to="/submit">
+                      <Button>提交案例</Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {pendingSubmissions.map(submission => (
+                      <div key={submission.id} className="bg-[#0f0f23] rounded-lg p-4 border border-[#16213e]">
+                        <div className="flex items-center justify-between mb-3">
+                          <Link to={`/cases/${submission.id}`} className="text-lg font-semibold text-white hover:text-[#e94560]">
+                            {submission.name}
+                          </Link>
+                          <Badge variant="warning">待审核</Badge>
+                        </div>
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          <Badge variant="default" size="sm">{submission.industry}</Badge>
+                          <Badge variant="default" size="sm">{submission.region}</Badge>
+                        </div>
+                        <div className="text-sm text-gray-400">
+                          提交于 {new Date(submission.createdAt).toLocaleDateString('zh-CN')}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
