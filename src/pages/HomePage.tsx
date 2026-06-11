@@ -27,7 +27,7 @@ export default function HomePage() {
   }, [cases]);
 
   const featuredCases = getFilteredCases().slice(0, 6);
-  const recentCases = [...cases].sort((a, b) => b.closedYear - a.closedYear).slice(0, 5);
+  const recentCases = [...getFilteredCases()].sort((a, b) => b.closedYear - a.closedYear).slice(0, 5);
 
   const topicIcons: Record<string, any> = {
     'flame': Flame,

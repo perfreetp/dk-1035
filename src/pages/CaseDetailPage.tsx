@@ -1,15 +1,27 @@
-import { useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Heart, Calendar, MapPin, TrendingUp, DollarSign, ExternalLink, Eye, AlertTriangle, Lightbulb, Users, Package } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Heart, Calendar, MapPin, TrendingUp, DollarSign, ExternalLink, Eye, AlertTriangle, Lightbulb, Users, Package, Send, X } from 'lucide-react';
 import { useCaseStore } from '../stores/caseStore';
 import { useFavoriteStore } from '../stores/favoriteStore';
+import { useUserStore } from '../stores/userStore';
+import { useCorrectionStore } from '../stores/correctionStore';
 import Badge from '../components/common/Badge';
+import Button from '../components/common/Button';
+import Modal from '../components/common/Modal';
 import { formatCurrency, calculateLifespan, formatYearMonth } from '../utils/formatters';
 
 export default function CaseDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { fetchCaseById, currentCase } = useCaseStore();
   const { isFavorite, toggleFavorite } = useFavoriteStore();
+  const { isAuthenticated } = useUserStore();
+  const { addCorrection } = useCorrectionStore();
+  
+  const [showCorrectionModal, setShowCorrectionModal] = useState(false);
+  const [correctionType, setCorrectionType] = useState<string>('basic');
+  const [correctionDescription, setCorrectionDescription] = useState('');
+  const [correctionLink, setCorrectionLink] = useState('');
 
   useEffect(() => {
     if (id) {
@@ -28,6 +40,39 @@ export default function CaseDetailPage() {
   }
 
   const isFav = isFavorite(currentCase.id);
+
+  const correctionTypes = [
+    { value: 'basic', label: '基础信息错误' },
+    { value: 'timeline', label: '时间线错误' },
+    { value: 'team', label: '团队信息错误' },
+    { value: 'funding', label: '融资信息错误' },
+    { value: 'reason', label: '失败原因不准确' }
+  ];
+
+  const handleSubmitCorrection = () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    if (!correctionDescription.trim()) {
+      alert('请填写纠错说明');
+      return;
+    }
+
+    addCorrection({
+      caseId: currentCase.id,
+      userId: 'anonymous',
+      type: correctionType as any,
+      description: correctionDescription,
+      link: correctionLink || undefined
+    });
+
+    setShowCorrectionModal(false);
+    setCorrectionDescription('');
+    setCorrectionLink('');
+    alert('纠错已提交，感谢您的反馈！');
+  };
 
   return (
     <div className="min-h-screen bg-[#0f0f23]">
@@ -85,7 +130,7 @@ export default function CaseDetailPage() {
                     <div className="text-2xl font-bold text-white">
                       {formatCurrency(currentCase.fundingAmount)}
                     </div>
-                    <div className="text-sm text-gray-400">人民币</div>
+                    <div className="text-sm text-gray-400">万元</div>
                   </div>
 
                   <div className="bg-[#0f0f23] rounded-lg p-4">
@@ -208,7 +253,7 @@ export default function CaseDetailPage() {
                     {currentCase.fundingRecords.map((record, index) => (
                       <tr key={index} className="border-b border-[#16213e]/50 hover:bg-[#16213e]/30">
                         <td className="py-3 px-4 text-white">{record.round}</td>
-                        <td className="py-3 px-4 text-[#4ecca3] font-semibold">{formatCurrency(record.amount)}</td>
+                        <td className="py-3 px-4 text-[#4ecca3] font-semibold">{formatCurrency(record.amount)}万</td>
                         <td className="py-3 px-4 text-gray-300">{record.investors}</td>
                         <td className="py-3 px-4 text-gray-400">{record.year}年</td>
                       </tr>
@@ -306,13 +351,13 @@ export default function CaseDetailPage() {
                   <Heart className={`w-5 h-5 ${isFav ? 'fill-current' : ''}`} />
                   <span>{isFav ? '已收藏' : '收藏案例'}</span>
                 </button>
-                <Link
-                  to="/submit"
+                <button
+                  onClick={() => setShowCorrectionModal(true)}
                   className="w-full flex items-center justify-center space-x-2 py-3 bg-[#16213e] text-gray-300 hover:bg-[#16213e]/80 rounded-lg transition-colors"
                 >
-                  <ExternalLink className="w-5 h-5" />
+                  <AlertTriangle className="w-5 h-5" />
                   <span>提交纠错</span>
-                </Link>
+                </button>
               </div>
 
               <div className="mt-6 pt-6 border-t border-[#16213e]">
@@ -336,6 +381,74 @@ export default function CaseDetailPage() {
           </div>
         </div>
       </div>
+
+      <Modal isOpen={showCorrectionModal} onClose={() => setShowCorrectionModal(false)} title="提交纠错" size="lg">
+        <div className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              纠错类型 <span className="text-[#e94560]">*</span>
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              {correctionTypes.map(type => (
+                <label
+                  key={type.value}
+                  className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer transition-colors ${
+                    correctionType === type.value
+                      ? 'border-[#e94560] bg-[#e94560]/10'
+                      : 'border-[#16213e] hover:border-[#e94560]'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="correctionType"
+                    value={type.value}
+                    checked={correctionType === type.value}
+                    onChange={(e) => setCorrectionType(e.target.value)}
+                    className="w-4 h-4 text-[#e94560] focus:ring-[#e94560]"
+                  />
+                  <span className="text-sm text-gray-300">{type.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              纠错说明 <span className="text-[#e94560]">*</span>
+            </label>
+            <textarea
+              value={correctionDescription}
+              onChange={(e) => setCorrectionDescription(e.target.value)}
+              className="w-full px-4 py-3 bg-[#0f0f23] border border-[#16213e] rounded-lg text-white focus:outline-none focus:border-[#e94560] h-32"
+              placeholder="请详细描述您发现的错误或需要更正的信息..."
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              公开来源链接（可选）
+            </label>
+            <input
+              type="url"
+              value={correctionLink}
+              onChange={(e) => setCorrectionLink(e.target.value)}
+              className="w-full px-4 py-3 bg-[#0f0f23] border border-[#16213e] rounded-lg text-white focus:outline-none focus:border-[#e94560]"
+              placeholder="https://..."
+            />
+            <p className="text-xs text-gray-500 mt-2">提供相关的新闻报道、官方公告等来源链接，帮助管理员核实信息</p>
+          </div>
+
+          <div className="flex justify-end space-x-3 pt-4 border-t border-[#16213e]">
+            <Button variant="secondary" onClick={() => setShowCorrectionModal(false)}>
+              取消
+            </Button>
+            <Button onClick={handleSubmitCorrection}>
+              <Send className="w-4 h-4 mr-2" />
+              提交纠错
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

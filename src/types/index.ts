@@ -49,7 +49,7 @@ export interface CaseStats {
 export interface Case {
   id: string;
   name: string;
-  logo: string;
+  logo?: string;
   industry: string;
   region: string;
   foundedYear: number;
@@ -68,6 +68,7 @@ export interface Case {
   createdAt: string;
   updatedAt: string;
   topics: string[];
+  submittedBy?: string;
 }
 
 export interface Note {
@@ -127,6 +128,7 @@ export interface Correction {
   userId: string;
   type: 'basic' | 'timeline' | 'team' | 'funding' | 'reason';
   description: string;
+  link?: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: string;
   updatedAt: string;

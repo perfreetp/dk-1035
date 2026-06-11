@@ -14,7 +14,7 @@ const failureCategories = ['资金管理', '市场竞争', '运营问题', '产�
 export default function CaseSubmitPage() {
   const navigate = useNavigate();
   const { submitCase } = useCaseStore();
-  const { isAuthenticated } = useUserStore();
+  const { isAuthenticated, user } = useUserStore();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     name: '',
@@ -76,7 +76,7 @@ export default function CaseSubmitPage() {
       }).filter(r => r.title && r.url)
     };
 
-    submitCase(caseData);
+    submitCase(caseData, user!.id);
     setSubmitted(true);
   };
 
